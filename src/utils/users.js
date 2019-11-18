@@ -1,4 +1,4 @@
-const users = []
+const users = [], rooms = [];
 
 const addUser = ({ id, username, room }) => {
     // Cleaning the data
@@ -27,6 +27,13 @@ const addUser = ({ id, username, room }) => {
     // Store user
     const user = { id, username, room };
     users.push(user);
+
+    // Check for new room 
+    const existingRoom = rooms.find(location => location.name === user.room);
+    if (!existingRoom) {
+        rooms.push({name :user.room});
+    }
+
     return { user };
 }
 
@@ -34,7 +41,13 @@ const removeUser = (id) => {
     const index = users.findIndex((user) => user.id === id);
 
     if (index != -1) {
-        return users.splice(index, 1)[0];
+        const removedUser = users.splice(index, 1)[0];
+
+        // Check for active users now
+        if(users.findIndex(user => user.room === removedUser.room) == -1) {
+            const roomIndex = rooms.findIndex((location) => location.name === removedUser.room);
+            rooms.splice(roomIndex, 1);
+        }
     }
 }
 
@@ -46,9 +59,15 @@ const getUsersInRoom = (room) => {
     return users.filter(user => user.room === room.trim().toLowerCase());
 }
 
+const getActiveRooms = () => {
+    console.log(rooms);
+    return rooms;
+}
+
 module.exports = {
     addUser,
     removeUser,
     getUser,
-    getUsersInRoom
+    getUsersInRoom,
+    getActiveRooms
 }

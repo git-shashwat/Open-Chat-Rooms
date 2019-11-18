@@ -13,7 +13,7 @@ const $locationTemplate = document.querySelector('#location-template').innerHTML
 const $sidebarTemplate = document.querySelector('#sidebar-template').innerHTML;
 
 // Options
-const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+var { username, room, activeroom } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
 const autoscroll = () => {
     // New message elememt
@@ -102,6 +102,10 @@ document.querySelector('#send-location').addEventListener('click', (e) => {
         alert('Geolocation is not supported by your browser');
     }
 });
+
+if (room == '') {
+    room = activeroom;
+}
 
 socket.emit('join', { username, room }, (error) => {
     if (error) {
